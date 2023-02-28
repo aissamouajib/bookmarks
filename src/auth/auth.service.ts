@@ -10,25 +10,39 @@ export class AuthService {
     constructor(private prisma: PrismaService) {}
     
     async signUp(signUpDto: SignUpDto) {
-        try {
-            const hash = await  argon.hash(signUpDto.password);
-            const user = await this.prisma.user.create({
-                data: {
-                    email: signUpDto.email,
-                    password: hash
-                },
-            });
-            delete user.password;
-            return user;
-        } catch (exception) {
-            if(exception.code === 'P2002') {
-                throw new ForbiddenException('Credentials taken!');
+        const hash = await  argon.hash(signUpDto.password);
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: signUpDto.email,
             }
-            throw exception;
+        });
+        if(user) {
+            throw new ForbiddenException('Credentials taken');
         }
+        const newUser = await this.prisma.user.create({
+            data: {
+                email: signUpDto.email,
+                password: hash
+            },
+        });
+        delete newUser.password;
+        return newUser;
     }
 
     async signIn(signInDto: SignInDto) {
-        return {msg: 'Signed in'};
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: signInDto.email,
+            }
+        });
+        if(!user) {
+            throw new ForbiddenException('Email does not exist!');
+        }
+        const pwMatches = await argon.verify(user.password, signInDto.password);
+        if(!pwMatches) {
+            throw new ForbiddenException('Password is incorrect!');
+        }
+        delete user.password;
+        return user;
     }
 }

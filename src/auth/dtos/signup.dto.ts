@@ -5,6 +5,10 @@ import { IsEmail, IsNotEmpty, IsString } from "class-validator";
     @IsNotEmpty()
     email: string;
     @IsString()
-    @IsNotEmpty( )
+    @IsNotEmpty()
     password: string;
+    @IsString()
+    firstName: string;
+    @IsString()
+    lastName: string;
  }
