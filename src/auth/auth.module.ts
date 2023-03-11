@@ -1,12 +1,12 @@
-import { Module, Post } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
-import { JwtStrategy } from "./strategies/index";
+import { Module, Post } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './strategies/index';
 
 @Module({
-    imports: [JwtModule.register({})],
-    controllers: [AuthController],
-    providers: [AuthService, JwtStrategy],
+  imports: [JwtModule.register({})],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}
